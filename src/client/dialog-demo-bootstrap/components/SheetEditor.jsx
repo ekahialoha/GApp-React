@@ -7,14 +7,14 @@ import FormInput from './FormInput.tsx';
 import { serverFunctions } from '../../utils/serverFunctions';
 
 const SheetEditor = () => {
-  const [names, setNames] = useState([]);
+  const [names, setNames] = useState({});
 
-  useEffect(() => {
-    serverFunctions
-      .getSheetsData()
-      .then(setNames)
-      .catch(alert);
-  }, []);
+  // useEffect(() => {
+  //   serverFunctions
+  //     .getSheetsData()
+  //     .then(setNames)
+  //     .catch(alert);
+  // }, []);
 
   const deleteSheet = sheetIndex => {
     serverFunctions
@@ -30,9 +30,10 @@ const SheetEditor = () => {
       .catch(alert);
   };
 
-  const submitNewSheet = async newSheetName => {
+  const submitNewSheet = async id => {
     try {
-      const response = await serverFunctions.addSheet(newSheetName);
+      const response = await serverFunctions.findById(id);
+      console.log(response)
       setNames(response);
     } catch (error) {
       // eslint-disable-next-line no-alert
@@ -55,35 +56,35 @@ const SheetEditor = () => {
       <FormInput submitNewSheet={submitNewSheet} />
       <ListGroup>
         <TransitionGroup className="sheet-list">
-          {names.length > 0 &&
-            names.map(name => (
+          {"id"in names > 0 &&
+            
               <CSSTransition
                 classNames="sheetNames"
                 timeout={500}
-                key={name.name}
+                key={names.name}
               >
                 <ListGroup.Item
                   className="d-flex"
-                  key={`${name.index}-${name.name}`}
+                  key={`${names.index}-${names.name}`}
                 >
                   <Button
                     className="border-0"
                     variant="outline-danger"
                     size="sm"
-                    onClick={() => deleteSheet(name.index)}
+                    onClick={() => deleteSheet(names.index)}
                   >
                     &times;
                   </Button>
                   <Button
                     className="border-0 mx-2"
-                    variant={name.isActive ? 'success' : 'outline-success'}
-                    onClick={() => setActiveSheet(name.name)}
+                    variant={names.isActive ? 'success' : 'outline-success'}
+                    onClick={() => setActiveSheet(names.name)}
                   >
-                    {name.name}
+                    {names.name} - {names.age} - {names.id}
                   </Button>
                 </ListGroup.Item>
               </CSSTransition>
-            ))}
+            }
         </TransitionGroup>
       </ListGroup>
     </div>
